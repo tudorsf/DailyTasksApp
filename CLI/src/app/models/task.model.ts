@@ -1,5 +1,5 @@
 
-export interface ToDo{
+export interface Task{
     id: number;
     activityName: string;
     isCompleted: boolean;

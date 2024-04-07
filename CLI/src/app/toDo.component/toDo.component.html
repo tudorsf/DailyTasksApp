@@ -1,1 +1,57 @@
-T
+<div class="container">
+    <div class="todo-container">
+      <h2>To-Do List</h2>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Search activity">
+      <input type="radio" id="all" name="filter" [(ngModel)]="filter" value="all" checked>
+      <label for="all">All</label>
+      <input type="radio" id="completed" name="filter" [(ngModel)]="filter" value="completed">
+      <label for="completed">Completed</label>
+      <input type="radio" id="notCompleted" name="filter" [(ngModel)]="filter" value="notCompleted">
+      <label for="notCompleted">Not Completed</label>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Activity Name</th>
+            <th>Completed</th>
+            <!--<th>Date</th>-->
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let todo of tasks">
+            <td>{{ todo.id }}</td>
+            <td>{{ todo.activityName }}</td>
+            <td>{{ todo.isCompleted ? 'Yes' : 'No' }}</td>
+            <!--<th>{{todo.date}}</th>-->
+            <td>
+              <button (click)="checkActivity(todo)">Check</button>
+              <button (click)="editActivity(todo)">Edit</button>
+              <button (click)="deleteActivity(todo)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+              <td colspan="4">
+
+                <input type="text" placeholder="Add activity" [(ngModel)]="newActivity.activityName">
+                
+                <mat-form-field>
+                  <mat-label>Choose a date</mat-label>
+                  <input [(ngModel)]="newActivityDate" matInput [matDatepicker]="picker">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                
+                <!--<input type="time" [(ngModel)]="newActivityTime">-->
+                <ngb-timepicker [(ngModel)]="newActivityTime"/>
+                <button (click)="addActivity(newActivity)">Add</button>
+              </td>
+            </tr>
+          </tfoot>
+      </table>
+    </div>
+  </div>
+  

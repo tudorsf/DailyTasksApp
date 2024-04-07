@@ -25,7 +25,7 @@ namespace API.Controllers
             var task = new ToDo();
 
             task.ActivityName = request.ActivityName;
-            task.Date = request.Date;
+            task.Date = request.Date.AddHours(3);
             task.isCompleted = false;
             task.DayId = int.Parse(request.Date.ToString("ddMMyyyy"));
 
@@ -43,9 +43,15 @@ namespace API.Controllers
             return tasks;
         }
 
+        [HttpGet("getTasks")]
+        public ActionResult<List<ToDo>> GetAllTasks()
+        {
+            var tasks = _context.ToDoList.ToList();
+            return tasks;
+        }
 
         [HttpPost("editTask")]
-        public async Task<ActionResult<ToDo>> EditTask([FromBody] ToDo request)
+        public ActionResult<ToDo> EditTask([FromBody] ToDo request)
         {
 
 
@@ -55,6 +61,7 @@ namespace API.Controllers
 
                 task.ActivityName = request.ActivityName;
                 task.isCompleted = request.isCompleted;
+                _context.SaveChanges();
                 return task;
             }
             else

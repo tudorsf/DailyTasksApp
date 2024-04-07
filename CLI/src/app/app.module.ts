@@ -5,18 +5,21 @@ import { AppComponent } from './app.component';
 import { ToDoComponent } from './toDo.component/toDo.component';
 import { DatePipe } from "@angular/common";
 import { HttpClientModule } from '@angular/common/http';
-
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    ToDoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    ToDoComponent,
+    BrowserAnimationsModule
     
   ],
   providers: [

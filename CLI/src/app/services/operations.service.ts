@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ToDo } from '../models/toDo.model';
+import { Task } from '../models/task.model';
 
 @Injectable({
     providedIn: 'root'
@@ -9,7 +9,7 @@ import { ToDo } from '../models/toDo.model';
   export class OperationsService {
     constructor(private http: HttpClient) {}
 
-    addTask(task: ToDo){
+    addTask(task: Task){
       return this.http.post('https://localhost:7082/api/ToDo/addTask', task)
     }
 
@@ -17,12 +17,12 @@ import { ToDo } from '../models/toDo.model';
       return this.http.get('https://localhost:7082/api/ToDo/GetTasks/'+ id)
     }
 
-    editTask(task: ToDo){
+    editTask(task: Task){
       return this.http.post('https://localhost:7082/api/ToDo/editTask', task)
     }
 
     deleteTask(id: any){
-      return this.http.delete('https://localhost:7082/api/ToDo/deleteTask'+ id)
+      return this.http.delete('https://localhost:7082/api/ToDo/deleteTask/'+ id)
     }
 
 
