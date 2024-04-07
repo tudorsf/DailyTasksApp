@@ -1,0 +1,24 @@
+<!--
+  <div class="modal-header bg-danger">
+    <h4 class="modal-title"></h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <p>{{ errorMessage }}</p>
+  </div>
+  <div class="modal-footer bg-danger">
+      <button type="button" class="btn btn-outline-dark">Close</button>
+  </div>-->
+
+  <div class="modal-header bg-success text-white">
+    <h4 class="modal-title">Success</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="closeModal()" aria-label="Close"></button>
+  </div>
+  <div class="modal-body bg-light text-dark">
+    <p>{{ successMessage }}</p>
+  </div>
+  <div class="modal-footer bg-light">
+    <button type="button" class="btn btn-outline-dark" (click)="closeModal()" data-bs-dismiss="modal">Close</button>
+  </div>
+
+
