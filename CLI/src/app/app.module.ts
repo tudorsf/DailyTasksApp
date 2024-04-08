@@ -7,11 +7,14 @@ import { DatePipe } from "@angular/common";
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EditModalComponent } from './toDo.component/editModal/editModal.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    EditModalComponent
   ],
   imports: [
     BrowserModule,
@@ -19,7 +22,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     FormsModule,
     ToDoComponent,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatFormFieldModule
     
   ],
   providers: [

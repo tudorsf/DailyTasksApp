@@ -26,3 +26,16 @@ body, html {
   th {
     background-color: #f2f2f2;
   }
+
+  .footerRow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+  }
+
+  .footerRow input{
+    
+      height: 60%; /* Set the height of the input */
+    
+  }

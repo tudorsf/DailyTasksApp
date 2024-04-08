@@ -1,14 +1,27 @@
 <div class="container">
     <div class="todo-container">
-      <h2>To-Do List</h2>
-      <input type="text" [(ngModel)]="searchQuery" placeholder="Search activity">
-      <input type="radio" id="all" name="filter" [(ngModel)]="filter" value="all" checked>
-      <label for="all">All</label>
-      <input type="radio" id="completed" name="filter" [(ngModel)]="filter" value="completed">
-      <label for="completed">Completed</label>
-      <input type="radio" id="notCompleted" name="filter" [(ngModel)]="filter" value="notCompleted">
-      <label for="notCompleted">Not Completed</label>
-      <table>
+      <h2>To-Do List for {{formatDate(todayDate)}}</h2>
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="example-full-width">
+            <mat-label>Activity Name</mat-label>
+            <input type="text" matInput [(ngModel)]="searchQuery"
+                   placeholder="">
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-radio-group [(ngModel)]="filter">
+            <mat-radio-button value="all">All</mat-radio-button>
+            <mat-radio-button value="completed">Completed</mat-radio-button>
+            <mat-radio-button value="notCompleted">Not Completed</mat-radio-button>
+          </mat-radio-group>
+       </div>
+        <div class="col">
+          <button mat-raised-button color="warn" (click)="fRes()">Filter</button>
+          <button mat-raised-button color="basic" (click)="reset()">Reset</button>
+        </div>
+      </div>
+       <table>
         <thead>
           <tr>
             <th>ID</th>
@@ -19,27 +32,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let todo of tasks">
+          <tr *ngFor="let task of filteredTasks">
             
-            <td>{{ todo.id }}</td>
-            <ng-container *ngIf="edit">
-              <td><input type="text" [(ngModel)]="todo.activityName"></td> 
-            </ng-container>
-            <ng-container *ngIf="!edit">
-              <td>{{todo.activityName}}</td>
-            </ng-container>
-           <td>{{ todo.isCompleted ? 'Yes' : 'No' }}</td>
+            <td>{{ task.id }}</td>
+            <td>{{task.activityName}}</td>
+           <td>{{ task.isCompleted ? 'Yes' : 'No' }}</td>
             <!--<th>{{todo.date}}</th>-->
             <td>
               <div class="row">
                 <div class="col">
-                   <button  class="btn btn-success" (click)="checkActivity(todo)">Check</button>
+                   <button  class="btn btn-success" [disabled]="task.isCompleted" (click)="checkActivity(task)">Check</button>
                 </div>
                 <div class="col">
-                  <button class="btn btn-warning" (click)="editActivity(todo)">Edit</button>
+                  <button class="btn btn-warning" (click)="editActivity(task)">Edit</button>
                 </div>
                 <div class="col">
-                  <button class="btn btn-danger" (click)="deleteActivity(todo)">Delete</button>
+                  <button class="btn btn-danger" (click)="deleteActivity(task)">Delete</button>
                 </div>
               </div>
             </td>
@@ -48,9 +56,14 @@
         <tfoot>
             <tr>
               <td colspan="4">
-                <div class="row">
+                <div class="row footerRow">
                   <div class="col">
-                    <input type="text" placeholder="Add activity" [(ngModel)]="newActivity.activityName">
+                    <!--<input type="text" placeholder="Add activity" [(ngModel)]="newActivity.activityName">-->
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Activity Name</mat-label>
+                      <input type="text" matInput [(ngModel)]="newActivity.activityName"
+                             placeholder="Ex. play football">
+                    </mat-form-field>
                   </div>
                   <div class="col">
                     <mat-form-field>
@@ -65,7 +78,7 @@
                     <ngb-timepicker [(ngModel)]="newActivityTime"/>
                    </div>
                    <div class="col">
-                    <button mat-flat-button color="primary" (click)="addActivity(newActivity)">Add</button>
+                    <button mat-flat-button color="primary" [disabled]="newActivity.activityName == '' || !newActivityDate || !newActivityTime || isTimeInPast(newActivityTime)" (click)="addActivity(newActivity)">Add</button>
                   </div>
                 </div>
               </td>

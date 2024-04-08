@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router } from '@angular/router';
 import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
@@ -14,7 +13,7 @@ export class InfoModalComponent {
 
   @Input() infoMessage: string = '';
   
-  constructor(public activeModal: NgbActiveModal,private errorService: ErrorService, private router: Router) {}
+  constructor(public activeModal: NgbActiveModal,private errorService: ErrorService) {}
 
   closeModal(){
     this.errorService.closeErrorModal();

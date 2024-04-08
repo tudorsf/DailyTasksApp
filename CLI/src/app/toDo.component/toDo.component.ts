@@ -1,4 +1,3 @@
-
 import { DatePipe } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { Task } from "../models/task.model";
@@ -10,11 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {MatNativeDateModule, NativeDateAdapter} from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgbTimeStruct, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbTimeStruct, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorService } from "../services/error.service";
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
+import { EditModalComponent } from "./editModal/editModal.component";
+import {MatRadioModule} from '@angular/material/radio'; 
+
 
 @Component({
     selector: 'toDo-component',
@@ -22,20 +24,21 @@ import {MatButtonModule} from '@angular/material/button';
     styleUrls: ['./toDo.component.css'],
     standalone: true,
     providers: [NativeDateAdapter],
-  imports: [
-     MatFormFieldModule,
-     MatInputModule, 
-     MatDatepickerModule, 
-     FormsModule, 
-     CommonModule, 
-     MatNativeDateModule,
-     BrowserAnimationsModule,
-     NgbTimepickerModule,
-     MatIconModule,
-     MatDividerModule,
-     MatButtonModule
-     
-  ],
+    imports: [
+      MatFormFieldModule,
+      MatInputModule, 
+      MatDatepickerModule, 
+      FormsModule, 
+      CommonModule, 
+      MatNativeDateModule,
+      BrowserAnimationsModule,
+      NgbTimepickerModule,
+      MatIconModule,
+      MatDividerModule,
+      MatButtonModule,
+      MatRadioModule
+    ],
+    
   
   })
 
@@ -49,18 +52,30 @@ export class ToDoComponent implements OnInit{
   filteredTasks! : Task[];
 
   searchQuery= '';
-  filter = '';
+  filter = 'all';
 
-  newActivity: Task = { id: 0, activityName: '', isCompleted: false, date: new Date(), dayId: 0 };
+  modalRef: NgbModalRef | null = null;
+
+  newActivity: Task = { 
+    id: 0, 
+    activityName: '', 
+    isCompleted: false, 
+    date: new Date(), 
+    dayId: 0 
+  };
+
+  addBtnDis = true;
 
   newActivityDate!: Date;
-  newActivityTime!: NgbTimeStruct;
+  newActivityTime: NgbTimeStruct = { hour: this.todayDate.getHours() , minute: this.todayDate.getMinutes(), second: 30 };
 
  
 
   constructor(private datePipe: DatePipe,
               private operations: OperationsService,
-            private errorService: ErrorService) {}
+              private errorService: ErrorService,
+              private modalService: NgbModal,
+              ) {}
 
   ngOnInit(): void {
     //this.getTasksForToday()
@@ -75,6 +90,9 @@ export class ToDoComponent implements OnInit{
     }
     )
   }
+
+  
+
 
   getTasksForToday(){
     const formattedDate = this.datePipe.transform(this.todayDate, 'ddMMyyyy');
@@ -92,6 +110,10 @@ export class ToDoComponent implements OnInit{
   checkActivity(task: Task){
     task.isCompleted = true;
     this.operations.editTask(task).subscribe({
+      next: () => {
+        this.errorService.openSuccessModal(task.activityName + " successfully completed")
+        this.getTasksForToday();
+      },
       error: (error) => {
         console.error('Error editing task:', error);
       }
@@ -99,7 +121,14 @@ export class ToDoComponent implements OnInit{
   }
 
   editActivity(task: Task){
-    this.edit = !this.edit;
+    if(task.isCompleted){
+      this.errorService.openInfoModal("you cannot edit an already checked activity")
+    } else {
+      const modalRef = this.modalService.open(EditModalComponent, { size: 'xl', windowClass:'resModal'});
+      modalRef.componentInstance.taskToEdit = task;
+
+    }
+      
   }
 
   deleteActivity(task: Task){
@@ -115,15 +144,12 @@ export class ToDoComponent implements OnInit{
   }
 
   addActivity(newActivity: Task){
-    console.log(newActivity)
     
-    console.log(new Date(this.newActivityDate), 'from datepicker');
     
     const activityDate = new Date(this.newActivityDate);
     activityDate.setHours(this.newActivityTime.hour);
     activityDate.setMinutes(this.newActivityTime.minute);
     
-    console.log(activityDate);
 
     newActivity.date = activityDate;
     
@@ -131,12 +157,58 @@ export class ToDoComponent implements OnInit{
         next: () => {
           this.getTasksForToday();
           this.errorService.openSuccessModal(newActivity.activityName + " succesfully added")
+          this.newActivity.activityName = '';
         },
         error: (error) => {
           this.errorService.openErrorModal(error.message);
           console.error('Error editing task:', error);
         }
     })
+  }
+
+  fRes(){
+
+    this.filteredTasks = this.tasks;
+
+    if (this.searchQuery != '') {
+      this.filteredTasks = this.filteredTasks.filter(task =>
+          task.activityName.toLowerCase().includes(this.searchQuery.toLowerCase()));
+      }
+
+    if(this.filter == 'completed'){
+      this.filteredTasks = this.filteredTasks.filter(task => task.isCompleted);
+    } 
+    
+    if(this.filter == 'notCompleted'){
+      this.filteredTasks = this.filteredTasks.filter(task => !task.isCompleted);
+    }
+  }
+
+  reset(){
+    this.filteredTasks = this.tasks;
+    this.filter = 'all';
+  }
+
+  formatDate(date: Date): string {
+    return this.datePipe.transform(date, 'dd MMM yyy') ?? '';
+  }
+
+  isTimeInPast(time: NgbTimeStruct): boolean{
+    const now = new Date();
+    const selectedTime = new Date();
+   
+    const startDate: Date | null | undefined = this.newActivityDate;
+
+    if(startDate){
+      const utcStartDate = new Date(startDate!.toISOString());
+      if(utcStartDate.getDay() == now.getDay()){
+        selectedTime.setHours(time.hour);
+        selectedTime.setMinutes(time.minute);
+        return selectedTime < now;
+      }
+    }
+
+    return false;
   }
 
 
