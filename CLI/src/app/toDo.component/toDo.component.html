@@ -1,10 +1,23 @@
 <div class="container">
     <div class="todo-container">
-      <h2>To-Do List for {{formatDate(todayDate)}}</h2>
+      <div class="row">
+        <h2>To-Do List for {{formatDate(todayDate)}} 
+          <span>
+            <mat-form-field appearance="fill">
+              <mat-label>Select Date</mat-label>
+              <mat-select [(value)]="selectedDate" (selectionChange)="onDateSelected()">
+                <mat-option value="today">Today</mat-option>
+                <mat-option value="tomorrow">Tomorrow</mat-option>
+                <mat-option value="dayAfterTomorrow">Day after Tomorrow</mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+          </span></h2>
+      </div>
       <div class="row">
         <div class="col">
           <mat-form-field class="example-full-width">
-            <mat-label>Activity Name</mat-label>
+            <mat-label>Search by Name</mat-label>
             <input type="text" matInput [(ngModel)]="searchQuery"
                    placeholder="">
           </mat-form-field>
@@ -32,6 +45,7 @@
           </tr>
         </thead>
         <tbody>
+       
           <tr *ngFor="let task of filteredTasks">
             
             <td>{{ task.id }}</td>
@@ -68,7 +82,7 @@
                   <div class="col">
                     <mat-form-field>
                       <mat-label>Choose a date</mat-label>
-                      <input [(ngModel)]="newActivityDate" matInput [matDatepicker]="picker" [min]="todayDate">
+                      <input [(ngModel)]="newActivityDate" matInput [matDatepicker]="picker" [min]="todayDateForPicker">
                       <mat-hint>MM/DD/YYYY</mat-hint>
                       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                       <mat-datepicker #picker></mat-datepicker>

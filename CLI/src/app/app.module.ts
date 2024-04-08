@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EditModalComponent } from './toDo.component/editModal/editModal.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     FormsModule,
     ToDoComponent,
     BrowserAnimationsModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatInputModule
     
   ],
   providers: [

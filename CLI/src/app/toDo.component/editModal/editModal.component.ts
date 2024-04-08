@@ -1,9 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorService } from 'src/app/services/error.service';
 import { Task } from 'src/app/models/task.model';
 import { OperationsService } from 'src/app/services/operations.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-edit-modal',
@@ -12,11 +11,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   providers: [NgbActiveModal],
 })
 
-export class EditModalComponent {
+export class EditModalComponent implements OnInit{
   
     @Input() taskToEdit!: Task;
 
-    newActivityName!: string;
+    newActivityName: string = '';
 
     modalRef: NgbModalRef | null = null;
 
@@ -25,8 +24,12 @@ export class EditModalComponent {
               private errorService: ErrorService, 
               private operationsService: OperationsService,
               private modalService: NgbModal) {}
-
  
+    ngOnInit(): void {
+        if (this.taskToEdit) {
+            this.newActivityName = this.taskToEdit.activityName;
+          }          
+    } 
   saveChanges(taskToEdit: Task){
     this.taskToEdit.activityName = this.newActivityName;
     this.operationsService.editTask(taskToEdit).subscribe({

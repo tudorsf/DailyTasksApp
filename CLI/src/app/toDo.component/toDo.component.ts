@@ -16,6 +16,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
 import { EditModalComponent } from "./editModal/editModal.component";
 import {MatRadioModule} from '@angular/material/radio'; 
+import {MatSelectModule} from '@angular/material/select';
 
 
 @Component({
@@ -36,7 +37,8 @@ import {MatRadioModule} from '@angular/material/radio';
       MatIconModule,
       MatDividerModule,
       MatButtonModule,
-      MatRadioModule
+      MatRadioModule,
+      MatSelectModule
     ],
     
   
@@ -45,6 +47,12 @@ import {MatRadioModule} from '@angular/material/radio';
 export class ToDoComponent implements OnInit{
 
   todayDate = new Date();
+
+  selectedDate = 'today';
+
+  todayDateForPicker = new Date();
+
+
 
   edit: boolean = false;
 
@@ -78,8 +86,8 @@ export class ToDoComponent implements OnInit{
               ) {}
 
   ngOnInit(): void {
-    //this.getTasksForToday()
-    const formattedDate = this.datePipe.transform(this.todayDate, 'ddMMyyyy');
+    this.getTasksForToday()
+    /*const formattedDate = this.datePipe.transform(this.todayDate, 'ddMMyyyy');
     console.log(formattedDate);
 
     this.operations.getTasks(parseFloat(formattedDate!)).subscribe((data: any) => {
@@ -88,7 +96,7 @@ export class ToDoComponent implements OnInit{
       this.filteredTasks = data;
       console.log(this.tasks)
     }
-    )
+    )*/
   }
 
   
@@ -96,28 +104,34 @@ export class ToDoComponent implements OnInit{
 
   getTasksForToday(){
     const formattedDate = this.datePipe.transform(this.todayDate, 'ddMMyyyy');
-    console.log(formattedDate);
-
+   
     this.operations.getTasks(parseFloat(formattedDate!)).subscribe((data: any) => {
       
       this.tasks = data;
       this.filteredTasks = data;
-      console.log(this.tasks)
     }
     )
   }
 
   checkActivity(task: Task){
-    task.isCompleted = true;
-    this.operations.editTask(task).subscribe({
-      next: () => {
-        this.errorService.openSuccessModal(task.activityName + " successfully completed")
-        this.getTasksForToday();
-      },
-      error: (error) => {
-        console.error('Error editing task:', error);
-      }
-    })
+    if(this.selectedDate == 'today'){
+      task.isCompleted = true;
+
+      this.operations.editTask(task).subscribe({
+        next: () => {
+          
+          this.errorService.openSuccessModal(task.activityName + " successfully completed")
+          this.getTasksForToday();
+        },
+        error: (error) => {
+          task.isCompleted = false;
+          this.errorService.openErrorModal(error.message)
+        }
+      })
+    } else if(this.selectedDate != 'today'){
+      this.errorService.openErrorModal("you cannot complete an activity that is not today")
+    }
+    
   }
 
   editActivity(task: Task){
@@ -187,6 +201,7 @@ export class ToDoComponent implements OnInit{
   reset(){
     this.filteredTasks = this.tasks;
     this.filter = 'all';
+    this.searchQuery = '';
   }
 
   formatDate(date: Date): string {
@@ -209,6 +224,20 @@ export class ToDoComponent implements OnInit{
     }
 
     return false;
+  }
+
+  onDateSelected() {
+    if(this.selectedDate === "today"){
+      this.todayDate = new Date();
+    }
+    if (this.selectedDate === "tomorrow") {
+      this.todayDate.setDate(new Date().getDate() + 1);
+    } 
+    else if (this.selectedDate === "dayAfterTomorrow") {
+      this.todayDate.setDate(new Date().getDate() + 2); 
+    }
+
+    this.getTasksForToday();
   }
 
 
